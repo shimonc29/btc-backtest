@@ -26,16 +26,26 @@ jobs:
       - name: Download and validate BTC data
         run: python data_loader.py
 
-      - name: Run research backtest
+      - name: Run V1 research
         run: |
           mkdir -p results
           python research.py data/btc_4h_data_2018_to_2025.csv --equity 2000
-          mv research_summary.csv results/research_summary.csv
+          mv research_summary.csv results/research_v1_summary.csv
 
-      - name: Run full trade log
+      - name: Run V1 trade log
         run: |
           python backtest.py data/btc_4h_data_2018_to_2025.csv --equity 2000
           mv btc_pullback_v1_trades.csv results/btc_pullback_v1_trades.csv
+
+      - name: Run V2 research
+        run: |
+          python research_v2.py data/btc_4h_data_2018_to_2025.csv --equity 2000
+          mv research_v2_summary.csv results/research_v2_summary.csv
+
+      - name: Run V2 trade log
+        run: |
+          python backtest_v2.py data/btc_4h_data_2018_to_2025.csv --equity 2000
+          mv btc_pullback_v2_trades.csv results/btc_pullback_v2_trades.csv
 
       - name: Commit results
         run: |
