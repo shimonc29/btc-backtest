@@ -57,6 +57,13 @@ jobs:
           python backtest_v3.py data/btc_4h_data_2018_to_2025.csv --equity 2000
           mv btc_momentum_v3_trades.csv results/btc_momentum_v3_trades.csv
 
+      - name: Run V3 robustness test
+        run: |
+          python robustness_v3.py data/btc_4h_data_2018_to_2025.csv --equity 2000
+          mv v3_robustness_grid.csv results/v3_robustness_grid.csv
+          mv v3_robustness_summary.csv results/v3_robustness_summary.csv
+          mv v3_robustness_baseline.csv results/v3_robustness_baseline.csv
+
       - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
