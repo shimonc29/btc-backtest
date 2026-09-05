@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - 'paper_trader.py'
+      - 'paper_trader_okx.py'
       - '.github/workflows/paper-trading.yml'
 
 permissions:
@@ -35,8 +36,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run V3 paper trader on live Binance 4H data
-        run: python paper_trader.py
+      - name: Run V3 paper trader on live OKX BTC-USDT 4H data
+        run: python paper_trader_okx.py
 
       - name: Persist paper state and logs
         run: |
