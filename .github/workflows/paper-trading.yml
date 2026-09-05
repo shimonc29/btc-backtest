@@ -1,0 +1,53 @@
+name: V3 Paper Trading
+
+on:
+  schedule:
+    - cron: '7 */4 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'paper_trader.py'
+      - '.github/workflows/paper-trading.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v3-paper-trading
+  cancel-in-progress: false
+
+jobs:
+  paper-trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run V3 paper trader on live Binance 4H data
+        run: python paper_trader.py
+
+      - name: Persist paper state and logs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f paper/state.json paper/status.json
+          if [ -f paper/events.csv ]; then git add -f paper/events.csv; fi
+          if [ -f paper/trades.csv ]; then git add -f paper/trades.csv; fi
+          if git diff --cached --quiet; then
+            echo "No paper-trading state changes"
+          else
+            git commit -m "Update V3 paper trading state"
+            git push
+          fi
