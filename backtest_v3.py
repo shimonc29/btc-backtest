@@ -17,7 +17,7 @@ def atr(df, period=14):
     return tr.rolling(period).mean()
 
 
-def prepare(df):
+def prepare(df, breakout_lookback=20):
     df = df.copy()
     df['ema20'] = ema(df['close'], 20)
     df['ema50'] = ema(df['close'], 50)
@@ -25,7 +25,7 @@ def prepare(df):
     df['atr14'] = atr(df, 14)
     df['atr_pct'] = df['atr14'] / df['close']
     df['ema200_prev12'] = df['ema200'].shift(12)
-    df['breakout20'] = df['high'].rolling(20).max().shift(1)
+    df['breakout'] = df['high'].rolling(breakout_lookback).max().shift(1)
     df['atr_q40'] = df['atr_pct'].rolling(100).quantile(0.40)
     df['atr_q90'] = df['atr_pct'].rolling(100).quantile(0.90)
     return df
@@ -45,48 +45,30 @@ def backtest_v3(
     df,
     initial_equity=2000.0,
     risk_pct=0.005,
+    breakout_lookback=20,
     initial_stop_atr=2.0,
     trail_atr=3.0,
     time_stop_bars=30,
     fee_rate=0.001,
     slippage_rate=0.0002,
 ):
-    """BTC Momentum Breakout 4H V3.
-
-    Intentionally different from V1/V2 pullback logic:
-    - Long only, spot only.
-    - Trend regime: close > EMA200, EMA50 > EMA200, EMA200 rising over 12 bars.
-    - Momentum entry: close breaks the prior 20-bar high.
-    - Volatility regime: ATR% between rolling 40th and 90th percentiles.
-    - Initial stop: 2 ATR.
-    - No fixed take profit. Uses a 3 ATR trailing stop based only on PREVIOUS-bar data.
-    - Secondary exit: close below EMA20 after at least two bars in trade.
-    - Time stop after 30 bars.
-    - Conservative execution with fees and slippage.
-    """
-    df = prepare(df).reset_index(drop=True)
+    df = prepare(df, breakout_lookback=breakout_lookback).reset_index(drop=True)
     equity = initial_equity
     peak = equity
     max_dd = 0.0
     trades = []
-    i = 220
+    i = max(220, breakout_lookback + 200)
 
     while i < len(df) - 1:
         row = df.iloc[i]
-
-        needed = [row['atr14'], row['breakout20'], row['atr_q40'], row['atr_q90'], row['ema200_prev12']]
+        needed = [row['atr14'], row['breakout'], row['atr_q40'], row['atr_q90'], row['ema200_prev12']]
         if not all(np.isfinite(x) for x in needed):
             i += 1
             continue
 
-        trend_ok = (
-            row['close'] > row['ema200'] and
-            row['ema50'] > row['ema200'] and
-            row['ema200'] > row['ema200_prev12']
-        )
-        breakout_ok = row['close'] > row['breakout20']
+        trend_ok = row['close'] > row['ema200'] and row['ema50'] > row['ema200'] and row['ema200'] > row['ema200_prev12']
+        breakout_ok = row['close'] > row['breakout']
         volatility_ok = row['atr_q40'] <= row['atr_pct'] <= row['atr_q90']
-
         if not (trend_ok and breakout_ok and volatility_ok):
             i += 1
             continue
@@ -103,7 +85,6 @@ def backtest_v3(
         risk_dollars = equity * risk_pct
         qty = risk_dollars / stop_distance
         notional = qty * entry
-
         if notional > equity:
             qty = equity / entry
             notional = qty * entry
@@ -118,14 +99,11 @@ def backtest_v3(
 
         for j in range(entry_i, last_i + 1):
             bar = df.iloc[j]
-
-            # Update trail using only information that was fully known BEFORE this bar.
             if j > entry_i:
                 prev = df.iloc[j - 1]
                 highest_close = max(highest_close, prev['close'])
                 if np.isfinite(prev['atr14']):
-                    candidate = highest_close - trail_atr * prev['atr14']
-                    trail_stop = max(trail_stop, candidate)
+                    trail_stop = max(trail_stop, highest_close - trail_atr * prev['atr14'])
 
             if bar['low'] <= trail_stop:
                 exit_i = j
@@ -157,50 +135,27 @@ def backtest_v3(
         max_dd = max(max_dd, (peak - equity) / peak if peak else 0)
 
         trades.append({
-            'signal_index': i,
-            'entry_index': entry_i,
-            'exit_index': exit_i,
-            'entry': entry,
-            'initial_stop': initial_stop,
-            'final_trail_stop': trail_stop,
-            'qty': qty,
-            'notional': notional,
-            'outcome': outcome,
-            'net_pnl': net_pnl,
-            'r_multiple': r_multiple,
-            'equity_before': equity_before,
-            'equity_after': equity,
+            'signal_index': i, 'entry_index': entry_i, 'exit_index': exit_i,
+            'entry': entry, 'exit': exit_price, 'initial_stop': initial_stop,
+            'final_trail_stop': trail_stop, 'qty': qty, 'notional': notional,
+            'entry_fee': entry_fee, 'exit_fee': exit_fee, 'outcome': outcome,
+            'net_pnl': net_pnl, 'r_multiple': r_multiple,
+            'equity_before': equity_before, 'equity_after': equity,
         })
-
         i = exit_i + 1
 
     t = pd.DataFrame(trades)
     if t.empty:
-        return t, {
-            'initial_equity': initial_equity,
-            'final_equity': equity,
-            'return_pct': 0.0,
-            'trades': 0,
-            'win_rate_pct': 0.0,
-            'profit_factor': np.nan,
-            'avg_r': np.nan,
-            'max_drawdown_pct': 0.0,
-            'max_consecutive_losses': 0,
-            'total_fees_est': 0.0,
-        }
+        return t, {'initial_equity':initial_equity,'final_equity':equity,'return_pct':0.0,'trades':0,'win_rate_pct':0.0,'profit_factor':np.nan,'avg_r':np.nan,'max_drawdown_pct':0.0,'max_consecutive_losses':0,'total_fees_est':0.0}
 
     wins = t[t.net_pnl > 0]
     losses = t[t.net_pnl <= 0]
-    gp = wins.net_pnl.sum()
-    gl = -losses.net_pnl.sum()
+    gp = wins.net_pnl.sum(); gl = -losses.net_pnl.sum()
     pf = gp / gl if gl > 0 else np.inf
-
     cur = max_losses = 0
     for is_loss in (t.net_pnl <= 0):
         cur = cur + 1 if is_loss else 0
         max_losses = max(max_losses, cur)
-
-    total_fees = float((t['notional'] * fee_rate + (t['qty'] * (t['entry'] + t['net_pnl'] / t['qty'].replace(0, np.nan))).fillna(0) * fee_rate).sum())
 
     stats = {
         'initial_equity': initial_equity,
@@ -212,7 +167,7 @@ def backtest_v3(
         'avg_r': t.r_multiple.mean(),
         'max_drawdown_pct': max_dd * 100,
         'max_consecutive_losses': max_losses,
-        'total_fees_est': total_fees,
+        'total_fees_est': float((t['entry_fee'] + t['exit_fee']).sum()),
     }
     return t, stats
 
@@ -222,12 +177,10 @@ def main():
     p.add_argument('csv')
     p.add_argument('--equity', type=float, default=2000.0)
     args = p.parse_args()
-
     df = load_csv(args.csv)
     trades, stats = backtest_v3(df, initial_equity=args.equity)
     print('\n=== BTC Momentum Breakout 4H V3 ===')
-    for k, v in stats.items():
-        print(f'{k}: {v}')
+    for k, v in stats.items(): print(f'{k}: {v}')
     trades.to_csv('btc_momentum_v3_trades.csv', index=False)
 
 
