@@ -1,0 +1,2 @@
+event_time_utc,bar_open_utc,type,price,equity,note
+2026-09-05T22:44:32.586874+00:00,2026-09-05T16:00:00+00:00,START,,2000.00000000,"Paper trading initialized at $2,000"
