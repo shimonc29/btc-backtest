@@ -47,6 +47,16 @@ jobs:
           python backtest_v2.py data/btc_4h_data_2018_to_2025.csv --equity 2000
           mv btc_pullback_v2_trades.csv results/btc_pullback_v2_trades.csv
 
+      - name: Run V3 research
+        run: |
+          python research_v3.py data/btc_4h_data_2018_to_2025.csv --equity 2000
+          mv research_v3_summary.csv results/research_v3_summary.csv
+
+      - name: Run V3 trade log
+        run: |
+          python backtest_v3.py data/btc_4h_data_2018_to_2025.csv --equity 2000
+          mv btc_momentum_v3_trades.csv results/btc_momentum_v3_trades.csv
+
       - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
