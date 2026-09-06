@@ -1,0 +1,42 @@
+{
+  "strategy": "V3 adaptive relative-strength rotation",
+  "initial_capital_usd": 1500.0,
+  "final_equity_usd": 4830.5420446255175,
+  "return_pct": 222.03613630836782,
+  "cagr_pct": 4.660725997770299,
+  "max_drawdown_pct": 15.537454188127509,
+  "sharpe": 3.104019816409012,
+  "positive_month_pct": 31.818181818181817,
+  "rebalances": 308,
+  "turnover_events": 246,
+  "data_start": "2001-01-01T00:00:00",
+  "data_end": "2026-09-04T00:00:00",
+  "symbols": [
+    "SPY",
+    "QQQ",
+    "IWM",
+    "DIA",
+    "XLK",
+    "XLF",
+    "XLV",
+    "XLI",
+    "XLY"
+  ],
+  "params": {
+    "mom_fast": 63,
+    "mom_mid": 126,
+    "mom_slow": 252,
+    "sma_long": 200,
+    "vol_lookback": 63,
+    "market_slope_lookback": 20,
+    "top_n": 2,
+    "max_asset_weight": 0.65,
+    "stress_vol_threshold": 0.3,
+    "stress_exposure": 0.5,
+    "normal_exposure": 1.0,
+    "fee_rate": 0.0005,
+    "slippage_rate": 0.0002
+  },
+  "benchmark_spy_return_pct": 462.10040755063926,
+  "benchmark_spy_cagr_pct": 6.956336475616043
+}
