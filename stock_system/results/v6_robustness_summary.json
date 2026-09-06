@@ -1,0 +1,99 @@
+{
+  "baseline": {
+    "strategy": "V6 SPY baseline + adaptive overlay (audited timing)",
+    "initial_capital_usd": 1500.0,
+    "final_equity_usd": 10140.766524357276,
+    "return_pct": 576.0511016238183,
+    "cagr_pct": 7.728126082100184,
+    "max_drawdown_pct": 27.17741693419413,
+    "sharpe": 3.254888446289584,
+    "calmar": 0.28435837374878686,
+    "positive_month_pct": 61.038961038961034,
+    "rebalances": 308,
+    "turnover_events": 644,
+    "regime_counts": {
+      "BEAR": 106,
+      "CAUTION": 23,
+      "STRONG_BULL": 165,
+      "NORMAL_BULL": 14
+    },
+    "data_start": "2001-01-01T00:00:00",
+    "data_end": "2026-09-04T00:00:00",
+    "symbols": [
+      "SPY",
+      "QQQ",
+      "IWM",
+      "DIA",
+      "XLK",
+      "XLF",
+      "XLV",
+      "XLI",
+      "XLY"
+    ],
+    "params": {
+      "sma_fast": 50,
+      "sma_slow": 200,
+      "mom_fast": 63,
+      "mom_mid": 126,
+      "mom_slow": 252,
+      "vol_lookback": 63,
+      "breadth_strong": 0.6,
+      "breadth_weak": 0.35,
+      "top_n": 2,
+      "bull_spy": 0.6,
+      "bull_qqq": 0.2,
+      "bull_sat": 0.2,
+      "normal_spy": 0.75,
+      "normal_qqq": 0.15,
+      "normal_sat": 0.1,
+      "caution_spy": 0.7,
+      "bear_spy": 0.2,
+      "max_asset_weight": 0.6,
+      "fee_rate": 0.0005,
+      "slippage_rate": 0.0002
+    },
+    "benchmark_spy_return_pct": 462.10040755063926,
+    "benchmark_spy_cagr_pct": 6.956336475616043,
+    "benchmark_spy_max_drawdown_pct": 52.19527757973199,
+    "timing_audit": "month-end close signal -> next-session open execution; pre-open sizing uses prior close only"
+  },
+  "parameter_tests": 20,
+  "parameter_positive_cagr_pct": 100.0,
+  "parameter_beat_spy_cagr_pct": 90.0,
+  "parameter_median_cagr_pct": 7.7152261481221345,
+  "parameter_worst_cagr_pct": 6.617442554649,
+  "parameter_median_max_drawdown_pct": 27.17741693419413,
+  "cost_tests_all_positive": true,
+  "cost_5x_cagr_pct": 7.628305323232709,
+  "period_tests_all_positive": true,
+  "holdout_2021_plus_cagr_pct": 14.675503622609698,
+  "holdout_2021_plus_spy_cagr_pct": 13.792085780632801,
+  "skipped_tests": [
+    {
+      "group": "stress_period",
+      "test": "dotcom_aftermath",
+      "error": "Insufficient common data for V6"
+    },
+    {
+      "group": "stress_period",
+      "test": "gfc",
+      "error": "Insufficient common data for V6"
+    },
+    {
+      "group": "stress_period",
+      "test": "covid",
+      "error": "Insufficient common data for V6"
+    },
+    {
+      "group": "stress_period",
+      "test": "inflation_bear",
+      "error": "Insufficient common data for V6"
+    }
+  ],
+  "notes": [
+    "V6 execution timing audited: signal at month-end close, fill next session open, pre-open sizing uses prior close only.",
+    "Parameter variants are stability tests and must not be used to select a tuned winner after seeing these results.",
+    "Short slices without enough common ETF sessions are recorded as skipped rather than crashing the suite.",
+    "SPY benchmark uses raw Yahoo close; dividends are not included in the benchmark total-return claim."
+  ]
+}
