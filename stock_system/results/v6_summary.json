@@ -1,20 +1,20 @@
 {
-  "strategy": "V6 SPY baseline + adaptive overlay (audited timing)",
+  "strategy": "V6 SPY baseline + adaptive overlay (audited timing, adjusted prices)",
   "initial_capital_usd": 1500.0,
-  "final_equity_usd": 10140.766524357276,
-  "return_pct": 576.0511016238183,
-  "cagr_pct": 7.728126082100184,
-  "max_drawdown_pct": 27.17741693419413,
-  "sharpe": 3.254888446289584,
-  "calmar": 0.28435837374878686,
-  "positive_month_pct": 61.038961038961034,
+  "final_equity_usd": 14464.147663136455,
+  "return_pct": 864.2765108757636,
+  "cagr_pct": 9.228586965939712,
+  "max_drawdown_pct": 25.8551275433769,
+  "sharpe": 3.8051612547840574,
+  "calmar": 0.356934497826669,
+  "positive_month_pct": 63.31168831168831,
   "rebalances": 308,
-  "turnover_events": 644,
+  "turnover_events": 659,
   "regime_counts": {
-    "BEAR": 106,
-    "CAUTION": 23,
-    "STRONG_BULL": 165,
-    "NORMAL_BULL": 14
+    "BEAR": 104,
+    "CAUTION": 11,
+    "STRONG_BULL": 192,
+    "NORMAL_BULL": 1
   },
   "data_start": "2001-01-01T00:00:00",
   "data_end": "2026-09-04T00:00:00",
@@ -51,8 +51,12 @@
     "fee_rate": 0.0005,
     "slippage_rate": 0.0002
   },
-  "benchmark_spy_return_pct": 462.10040755063926,
-  "benchmark_spy_cagr_pct": 6.956336475616043,
-  "benchmark_spy_max_drawdown_pct": 52.19527757973199,
-  "timing_audit": "month-end close signal -> next-session open execution; pre-open sizing uses prior close only"
+  "benchmark_spy_total_return_pct": 787.7127172701348,
+  "benchmark_spy_total_return_cagr_pct": 8.877167635399541,
+  "benchmark_spy_total_return_max_drawdown_pct": 50.78481056551203,
+  "benchmark_spy_return_pct": 787.7127172701348,
+  "benchmark_spy_cagr_pct": 8.877167635399541,
+  "benchmark_spy_max_drawdown_pct": 50.78481056551203,
+  "timing_audit": "month-end close signal -> next-session open execution; pre-open sizing uses prior close only",
+  "price_basis": "Yahoo adjusted OHLC derived from AdjClose/RawClose factor; benchmark uses adjusted SPY close"
 }
