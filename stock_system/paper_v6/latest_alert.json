@@ -1,0 +1,21 @@
+{
+  "action": "ENTER",
+  "alert_id": "ENTER:2026-09-04:STRONG_BULL:DIA=0.084722;QQQ=0.200000;SPY=0.600000;XLK=0.115278",
+  "as_of": "2026-09-04",
+  "cash_usd": 1500.0,
+  "current_weights": {},
+  "execution_note": "Signal only; no broker order is sent by this alert layer.",
+  "message_he": "כניסה ראשונית לפי V6: SPY 60.0%, QQQ 20.0%, XLK 11.5%, DIA 8.5%. ביצוע מתוכנן בפתיחת יום המסחר הבא.",
+  "paper_equity_usd": 1500.0,
+  "paper_only": true,
+  "regime": "STRONG_BULL",
+  "signal_date": "2026-09-04",
+  "target_weights": {
+    "DIA": 0.08472178374356237,
+    "QQQ": 0.2,
+    "SPY": 0.6,
+    "XLK": 0.11527821625643764
+  },
+  "title": "כניסה ראשונית לפי V6",
+  "trade_count": 0
+}
