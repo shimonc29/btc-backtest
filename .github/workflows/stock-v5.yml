@@ -1,0 +1,47 @@
+name: US Stock System V5
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'stock_system/strategy_v5.py'
+      - 'stock_system/run_v5.py'
+      - '.github/workflows/stock-v5.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stock-system-v5
+  cancel-in-progress: true
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run US stock V5 backtest
+        run: python stock_system/run_v5.py
+      - name: Persist stock V5 results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f stock_system/results/v5_*
+          if git diff --cached --quiet; then
+            echo "No result changes"
+          else
+            git commit -m "Update US stock V5 backtest results"
+            git pull --rebase origin main
+            git push
+          fi
