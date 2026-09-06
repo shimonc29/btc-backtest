@@ -60,9 +60,6 @@ def safe_slice(name: str, group: str, raw: dict, start: str, end: str | None) ->
         r = run_v6.run_backtest(raw_data=raw, start_override=start, end_override=end)
         return metric_row(name, r, group, meta)
     except RuntimeError as e:
-        # A short historical window may not contain enough common sessions across
-        # the entire ETF universe. Do not fail the whole robustness suite for one
-        # unavailable slice; record it explicitly as skipped.
         if "Insufficient common data" in str(e):
             return skipped_row(name, group, meta, e)
         raise
@@ -70,15 +67,12 @@ def safe_slice(name: str, group: str, raw: dict, start: str, end: str | None) ->
 
 def main() -> None:
     OUTDIR.mkdir(parents=True, exist_ok=True)
-
-    # Fetch market data once; all robustness runs reuse the exact same dataset.
     raw = {s: run_v6.fetch_yahoo(s) for s in run_v6.UNIVERSE}
     rows: list[dict] = []
 
     baseline = run_v6.run_backtest(raw_data=raw)
-    rows.append(metric_row("baseline_audited", baseline, "baseline"))
+    rows.append(metric_row("baseline_audited_adjusted", baseline, "baseline"))
 
-    # Cost stress: same logic, harsher execution assumptions.
     for mult in [2, 3, 5]:
         p = {
             "fee_rate": DEFAULTS["fee_rate"] * mult,
@@ -87,7 +81,6 @@ def main() -> None:
         r = run_v6.run_backtest(params=p, raw_data=raw)
         rows.append(metric_row(f"cost_{mult}x", r, "cost", p))
 
-    # Parameter neighbourhood tests. These are stability checks, not optimization.
     variants = [
         ("sma_slow_180", {"sma_slow": 180}),
         ("sma_slow_220", {"sma_slow": 220}),
@@ -114,8 +107,6 @@ def main() -> None:
         r = run_v6.run_backtest(params=p, raw_data=raw)
         rows.append(metric_row(name, r, "parameter", p))
 
-    # Time-slice tests. Indicators are computed on full history before slicing,
-    # preserving warm-up and avoiding split-reset artifacts.
     periods = [
         ("dev_2001_2015", "2001-01-01", "2015-12-31"),
         ("test_2016_2020", "2016-01-01", "2020-12-31"),
@@ -126,7 +117,6 @@ def main() -> None:
     for name, start, end in periods:
         rows.append(safe_slice(name, "period", raw, start, end))
 
-    # Known stress windows. These are scenario slices, not independent OOS tests.
     stress = [
         ("dotcom_aftermath", "2001-01-01", "2003-12-31"),
         ("gfc", "2007-01-01", "2009-12-31"),
@@ -163,7 +153,7 @@ def main() -> None:
             "V6 execution timing audited: signal at month-end close, fill next session open, pre-open sizing uses prior close only.",
             "Parameter variants are stability tests and must not be used to select a tuned winner after seeing these results.",
             "Short slices without enough common ETF sessions are recorded as skipped rather than crashing the suite.",
-            "SPY benchmark uses raw Yahoo close; dividends are not included in the benchmark total-return claim.",
+            "All strategy and benchmark prices use Yahoo adjusted OHLC derived from AdjClose/RawClose; SPY benchmark therefore includes Yahoo's distribution adjustments.",
         ],
     }
     (OUTDIR / "v6_robustness_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
