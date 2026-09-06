@@ -1,21 +1,21 @@
 {
   "baseline": {
-    "strategy": "V6 SPY baseline + adaptive overlay (audited timing)",
+    "strategy": "V6 SPY baseline + adaptive overlay (audited timing, adjusted prices)",
     "initial_capital_usd": 1500.0,
-    "final_equity_usd": 10140.766524357276,
-    "return_pct": 576.0511016238183,
-    "cagr_pct": 7.728126082100184,
-    "max_drawdown_pct": 27.17741693419413,
-    "sharpe": 3.254888446289584,
-    "calmar": 0.28435837374878686,
-    "positive_month_pct": 61.038961038961034,
+    "final_equity_usd": 14464.141144261424,
+    "return_pct": 864.2760762840951,
+    "cagr_pct": 9.228585048408133,
+    "max_drawdown_pct": 25.85513634267259,
+    "sharpe": 3.8051577933962326,
+    "calmar": 0.35693430218647976,
+    "positive_month_pct": 63.31168831168831,
     "rebalances": 308,
-    "turnover_events": 644,
+    "turnover_events": 659,
     "regime_counts": {
-      "BEAR": 106,
-      "CAUTION": 23,
-      "STRONG_BULL": 165,
-      "NORMAL_BULL": 14
+      "BEAR": 104,
+      "CAUTION": 11,
+      "STRONG_BULL": 192,
+      "NORMAL_BULL": 1
     },
     "data_start": "2001-01-01T00:00:00",
     "data_end": "2026-09-04T00:00:00",
@@ -52,22 +52,26 @@
       "fee_rate": 0.0005,
       "slippage_rate": 0.0002
     },
-    "benchmark_spy_return_pct": 462.10040755063926,
-    "benchmark_spy_cagr_pct": 6.956336475616043,
-    "benchmark_spy_max_drawdown_pct": 52.19527757973199,
-    "timing_audit": "month-end close signal -> next-session open execution; pre-open sizing uses prior close only"
+    "benchmark_spy_total_return_pct": 787.7128733932298,
+    "benchmark_spy_total_return_cagr_pct": 8.877168381260358,
+    "benchmark_spy_total_return_max_drawdown_pct": 50.78480023038985,
+    "benchmark_spy_return_pct": 787.7128733932298,
+    "benchmark_spy_cagr_pct": 8.877168381260358,
+    "benchmark_spy_max_drawdown_pct": 50.78480023038985,
+    "timing_audit": "month-end close signal -> next-session open execution; pre-open sizing uses prior close only",
+    "price_basis": "Yahoo adjusted OHLC derived from AdjClose/RawClose factor; benchmark uses adjusted SPY close"
   },
   "parameter_tests": 20,
   "parameter_positive_cagr_pct": 100.0,
-  "parameter_beat_spy_cagr_pct": 90.0,
-  "parameter_median_cagr_pct": 7.7152261481221345,
-  "parameter_worst_cagr_pct": 6.617442554649,
-  "parameter_median_max_drawdown_pct": 27.17741693419413,
+  "parameter_beat_spy_cagr_pct": 80.0,
+  "parameter_median_cagr_pct": 9.228585048408133,
+  "parameter_worst_cagr_pct": 8.047883957566281,
+  "parameter_median_max_drawdown_pct": 25.85513634267259,
   "cost_tests_all_positive": true,
-  "cost_5x_cagr_pct": 7.628305323232709,
+  "cost_5x_cagr_pct": 9.14441822041776,
   "period_tests_all_positive": true,
-  "holdout_2021_plus_cagr_pct": 14.675503622609698,
-  "holdout_2021_plus_spy_cagr_pct": 13.792085780632801,
+  "holdout_2021_plus_cagr_pct": 16.26039952305165,
+  "holdout_2021_plus_spy_cagr_pct": 15.289030243827796,
   "skipped_tests": [
     {
       "group": "stress_period",
@@ -94,6 +98,6 @@
     "V6 execution timing audited: signal at month-end close, fill next session open, pre-open sizing uses prior close only.",
     "Parameter variants are stability tests and must not be used to select a tuned winner after seeing these results.",
     "Short slices without enough common ETF sessions are recorded as skipped rather than crashing the suite.",
-    "SPY benchmark uses raw Yahoo close; dividends are not included in the benchmark total-return claim."
+    "All strategy and benchmark prices use Yahoo adjusted OHLC derived from AdjClose/RawClose; SPY benchmark therefore includes Yahoo's distribution adjustments."
   ]
 }
