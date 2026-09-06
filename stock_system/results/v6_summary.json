@@ -1,15 +1,15 @@
 {
-  "strategy": "V6 SPY baseline + adaptive overlay",
+  "strategy": "V6 SPY baseline + adaptive overlay (audited timing)",
   "initial_capital_usd": 1500.0,
-  "final_equity_usd": 12326.60319392867,
-  "return_pct": 721.7735462619112,
-  "cagr_pct": 8.550328660636652,
-  "max_drawdown_pct": 24.53254130922803,
-  "sharpe": 3.612584305686516,
-  "calmar": 0.34853008307869054,
+  "final_equity_usd": 10140.766524357276,
+  "return_pct": 576.0511016238183,
+  "cagr_pct": 7.728126082100184,
+  "max_drawdown_pct": 27.17741693419413,
+  "sharpe": 3.254888446289584,
+  "calmar": 0.28435837374878686,
   "positive_month_pct": 61.038961038961034,
   "rebalances": 308,
-  "turnover_events": 541,
+  "turnover_events": 644,
   "regime_counts": {
     "BEAR": 106,
     "CAUTION": 23,
@@ -53,5 +53,6 @@
   },
   "benchmark_spy_return_pct": 462.10040755063926,
   "benchmark_spy_cagr_pct": 6.956336475616043,
-  "benchmark_spy_max_drawdown_pct": 52.19527757973199
+  "benchmark_spy_max_drawdown_pct": 52.19527757973199,
+  "timing_audit": "month-end close signal -> next-session open execution; pre-open sizing uses prior close only"
 }
