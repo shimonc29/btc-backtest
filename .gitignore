@@ -3,3 +3,11 @@ __pycache__/
 *.pyc
 .DS_Store
 data/
+
+# Local secrets / exchange credentials
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
