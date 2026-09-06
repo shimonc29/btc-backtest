@@ -2,7 +2,9 @@ name: V3 Paper Trading
 
 on:
   schedule:
-    - cron: '7 */4 * * *'
+    # Reliability watchdog: run hourly, but the trader only processes NEW closed 4H candles.
+    # This avoids missing a 4H decision because GitHub scheduled runs can be delayed/skipped.
+    - cron: '23 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
