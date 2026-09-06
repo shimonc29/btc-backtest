@@ -1,0 +1,27 @@
+{
+  "cash": -1.4814538484841933e-15,
+  "engine": "V6 frozen paper",
+  "initial_capital_usd": 1500.0,
+  "last_monthly_signal": "2026-08",
+  "last_processed_session": "2026-09-04",
+  "notes": [
+    "Paper only. No broker orders are sent.",
+    "Signals use adjusted Yahoo closes; simulated fills use adjusted next-session open.",
+    "The first allocation may be a bootstrap entry and is tagged separately from normal month-end rebalances."
+  ],
+  "pending": null,
+  "shares": {
+    "DIA": 2.9955489509580655,
+    "IWM": 0.0,
+    "QQQ": 5.2859906428098755,
+    "SPY": 14.631330939072216,
+    "XLF": 0.0,
+    "XLI": 0.0,
+    "XLK": 11.724461135120299,
+    "XLV": 0.0,
+    "XLY": 0.0
+  },
+  "started": "2026-09-04",
+  "trade_count": 754,
+  "version": 1
+}
