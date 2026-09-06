@@ -14,7 +14,8 @@ STATE_PATH = PAPER_DIR / "state.json"
 SNAPSHOT_PATH = PAPER_DIR / "latest_snapshot.json"
 TRADES_PATH = PAPER_DIR / "trades.csv"
 INITIAL_PAPER_USD = 1500.0
-PAPER_VERSION = 2
+# V3 is a deliberate clean-forward reset: no historical replay is allowed.
+PAPER_VERSION = 3
 TRADE_COLUMNS = ["signal_date", "execution_date", "symbol", "side", "qty", "fill", "fee", "regime", "bootstrap"]
 
 
