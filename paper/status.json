@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-09-06T12:10:58.969553+00:00",
+  "updated_at_utc": "2026-09-06T15:32:19.653764+00:00",
   "strategy": "BTC Momentum Breakout 4H V3 (FROZEN)",
   "mode": "PAPER_ONLY_NO_REAL_ORDERS",
   "symbol": "BTC-USDT",
@@ -34,5 +34,5 @@
   "return_pct": 0.0,
   "closed_trades": 0,
   "position": null,
-  "processed_new_closed_bars": 2
+  "processed_new_closed_bars": 0
 }
