@@ -16,6 +16,8 @@ def metric_row(name: str, result: dict, group: str, params: dict | None = None) 
     return {
         "group": group,
         "test": name,
+        "status": "ok",
+        "error": "",
         "cagr_pct": s["cagr_pct"],
         "return_pct": s["return_pct"],
         "max_drawdown_pct": s["max_drawdown_pct"],
@@ -29,6 +31,41 @@ def metric_row(name: str, result: dict, group: str, params: dict | None = None) 
         "start": s["data_start"],
         "end": s["data_end"],
     }
+
+
+def skipped_row(name: str, group: str, params: dict | None, error: Exception) -> dict:
+    return {
+        "group": group,
+        "test": name,
+        "status": "skipped",
+        "error": str(error),
+        "cagr_pct": None,
+        "return_pct": None,
+        "max_drawdown_pct": None,
+        "sharpe": None,
+        "calmar": None,
+        "spy_cagr_pct": None,
+        "spy_max_drawdown_pct": None,
+        "rebalances": None,
+        "turnover_events": None,
+        "params": json.dumps(params or {}, sort_keys=True),
+        "start": (params or {}).get("start"),
+        "end": (params or {}).get("end"),
+    }
+
+
+def safe_slice(name: str, group: str, raw: dict, start: str, end: str | None) -> dict:
+    meta = {"start": start, "end": end}
+    try:
+        r = run_v6.run_backtest(raw_data=raw, start_override=start, end_override=end)
+        return metric_row(name, r, group, meta)
+    except RuntimeError as e:
+        # A short historical window may not contain enough common sessions across
+        # the entire ETF universe. Do not fail the whole robustness suite for one
+        # unavailable slice; record it explicitly as skipped.
+        if "Insufficient common data" in str(e):
+            return skipped_row(name, group, meta, e)
+        raise
 
 
 def main() -> None:
@@ -50,8 +87,7 @@ def main() -> None:
         r = run_v6.run_backtest(params=p, raw_data=raw)
         rows.append(metric_row(f"cost_{mult}x", r, "cost", p))
 
-    # Parameter neighbourhood tests. Change one structural parameter at a time,
-    # then several combined variants. This is stability testing, not optimization.
+    # Parameter neighbourhood tests. These are stability checks, not optimization.
     variants = [
         ("sma_slow_180", {"sma_slow": 180}),
         ("sma_slow_220", {"sma_slow": 220}),
@@ -79,7 +115,7 @@ def main() -> None:
         rows.append(metric_row(name, r, "parameter", p))
 
     # Time-slice tests. Indicators are computed on full history before slicing,
-    # preserving warm-up and avoiding the split-reset problem.
+    # preserving warm-up and avoiding split-reset artifacts.
     periods = [
         ("dev_2001_2015", "2001-01-01", "2015-12-31"),
         ("test_2016_2020", "2016-01-01", "2020-12-31"),
@@ -88,8 +124,7 @@ def main() -> None:
         ("recent_2018_plus", "2018-01-01", None),
     ]
     for name, start, end in periods:
-        r = run_v6.run_backtest(raw_data=raw, start_override=start, end_override=end)
-        rows.append(metric_row(name, r, "period", {"start": start, "end": end}))
+        rows.append(safe_slice(name, "period", raw, start, end))
 
     # Known stress windows. These are scenario slices, not independent OOS tests.
     stress = [
@@ -99,15 +134,17 @@ def main() -> None:
         ("inflation_bear", "2021-01-01", "2023-12-31"),
     ]
     for name, start, end in stress:
-        r = run_v6.run_backtest(raw_data=raw, start_override=start, end_override=end)
-        rows.append(metric_row(name, r, "stress_period", {"start": start, "end": end}))
+        rows.append(safe_slice(name, "stress_period", raw, start, end))
 
     df = pd.DataFrame(rows)
     df.to_csv(OUTDIR / "v6_robustness.csv", index=False)
 
-    param_df = df[df["group"] == "parameter"]
-    cost_df = df[df["group"] == "cost"]
-    period_df = df[df["group"] == "period"]
+    ok = df[df["status"] == "ok"].copy()
+    param_df = ok[ok["group"] == "parameter"]
+    cost_df = ok[ok["group"] == "cost"]
+    period_df = ok[ok["group"] == "period"]
+    holdout = ok[ok["test"] == "holdout_2021_plus"]
+
     summary = {
         "baseline": baseline["summary"],
         "parameter_tests": int(len(param_df)),
@@ -119,12 +156,14 @@ def main() -> None:
         "cost_tests_all_positive": bool((cost_df["cagr_pct"] > 0).all()) if len(cost_df) else False,
         "cost_5x_cagr_pct": float(cost_df.loc[cost_df["test"] == "cost_5x", "cagr_pct"].iloc[0]) if (cost_df["test"] == "cost_5x").any() else None,
         "period_tests_all_positive": bool((period_df["cagr_pct"] > 0).all()) if len(period_df) else False,
-        "holdout_2021_plus_cagr_pct": float(df.loc[df["test"] == "holdout_2021_plus", "cagr_pct"].iloc[0]),
-        "holdout_2021_plus_spy_cagr_pct": float(df.loc[df["test"] == "holdout_2021_plus", "spy_cagr_pct"].iloc[0]),
+        "holdout_2021_plus_cagr_pct": float(holdout["cagr_pct"].iloc[0]) if len(holdout) else None,
+        "holdout_2021_plus_spy_cagr_pct": float(holdout["spy_cagr_pct"].iloc[0]) if len(holdout) else None,
+        "skipped_tests": df[df["status"] == "skipped"][["group", "test", "error"]].to_dict("records"),
         "notes": [
-            "V6 execution timing audited before robustness: signal at month-end close, fill next session open, pre-open sizing uses prior close only.",
+            "V6 execution timing audited: signal at month-end close, fill next session open, pre-open sizing uses prior close only.",
             "Parameter variants are stability tests and must not be used to select a tuned winner after seeing these results.",
-            "SPY benchmark uses raw Yahoo close in this research implementation; dividends are not included in either benchmark total-return claim.",
+            "Short slices without enough common ETF sessions are recorded as skipped rather than crashing the suite.",
+            "SPY benchmark uses raw Yahoo close; dividends are not included in the benchmark total-return claim.",
         ],
     }
     (OUTDIR / "v6_robustness_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
