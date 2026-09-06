@@ -1,0 +1,66 @@
+{
+  "method": "Sequential OOS consistency test with frozen V6 parameters; no tuning between windows",
+  "price_basis": "Yahoo adjusted OHLC / adjusted SPY benchmark",
+  "windows_run": 4,
+  "windows_skipped": [],
+  "all_windows_positive_cagr": true,
+  "windows_beating_spy": 3,
+  "windows_beating_spy_pct": 75.0,
+  "median_strategy_cagr_pct": 13.447311079375778,
+  "median_spy_cagr_pct": 13.709167074848372,
+  "median_alpha_cagr_pct": 0.6538078238954128,
+  "worst_window_cagr_pct": 3.227694964604888,
+  "worst_window_alpha_cagr_pct": -1.495079094821449,
+  "median_strategy_max_drawdown_pct": 15.162412672566594,
+  "median_spy_max_drawdown_pct": 21.68744474828867,
+  "windows": [
+    {
+      "window": "oos_2006_2010",
+      "start": "2006-01-01T00:00:00",
+      "end": "2010-12-01T00:00:00",
+      "strategy_cagr_pct": 3.227694964604888,
+      "spy_cagr_pct": 1.825397608721735,
+      "alpha_cagr_pct": 1.402297355883153,
+      "strategy_max_drawdown_pct": 12.597289569634484,
+      "spy_max_drawdown_pct": 50.78481415627516,
+      "strategy_sharpe": 2.17866937612457,
+      "rebalances": 59
+    },
+    {
+      "window": "oos_2011_2015",
+      "start": "2011-01-01T00:00:00",
+      "end": "2015-12-01T00:00:00",
+      "strategy_cagr_pct": 10.634224811047499,
+      "spy_cagr_pct": 12.129303905868948,
+      "alpha_cagr_pct": -1.495079094821449,
+      "strategy_max_drawdown_pct": 11.95899612552459,
+      "spy_max_drawdown_pct": 16.22132415260361,
+      "strategy_sharpe": 4.948781549774167,
+      "rebalances": 59
+    },
+    {
+      "window": "oos_2016_2020",
+      "start": "2016-01-01T00:00:00",
+      "end": "2020-12-01T00:00:00",
+      "strategy_cagr_pct": 16.910754556998597,
+      "spy_cagr_pct": 16.574506013084033,
+      "alpha_cagr_pct": 0.3362485439145644,
+      "strategy_max_drawdown_pct": 17.727535775498705,
+      "spy_max_drawdown_pct": 19.44770547343172,
+      "strategy_sharpe": 5.351620904122825,
+      "rebalances": 59
+    },
+    {
+      "window": "oos_2021_plus",
+      "start": "2021-01-01T00:00:00",
+      "end": "2026-09-04T00:00:00",
+      "strategy_cagr_pct": 16.260397347704057,
+      "spy_cagr_pct": 15.289030243827796,
+      "alpha_cagr_pct": 0.9713671038762612,
+      "strategy_max_drawdown_pct": 25.855138265587808,
+      "spy_max_drawdown_pct": 23.92718402314562,
+      "strategy_sharpe": 4.629945558354699,
+      "rebalances": 68
+    }
+  ]
+}
