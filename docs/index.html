@@ -1,90 +1,63 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BTC V3 — Paper Trading Dashboard</title>
-  <meta name="color-scheme" content="dark" />
-  <style>
-    :root {
-      --bg:#07111f; --panel:#0d1b2e; --panel2:#10233a; --line:#203751;
-      --text:#f4f7fb; --muted:#93a7bd; --good:#27d797; --bad:#ff647c;
-      --warn:#ffbf5b; --blue:#5ca9ff; --violet:#9c8cff;
-    }
-    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 15% 0%,#122b48 0,#07111f 38%);color:var(--text);font-family:Arial,"Noto Sans Hebrew",sans-serif}
-    .wrap{max-width:1180px;margin:auto;padding:24px}
-    header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
-    h1{font-size:clamp(26px,4vw,40px);margin:0 0 7px}.sub{color:var(--muted);font-size:14px}.live{display:flex;gap:8px;align-items:center;background:#0c2135;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:13px;white-space:nowrap}.dot{width:9px;height:9px;border-radius:50%;background:var(--good);box-shadow:0 0 14px var(--good)}
-    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px}.card{background:linear-gradient(145deg,rgba(18,42,68,.96),rgba(11,25,43,.96));border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 14px 40px rgba(0,0,0,.16)}
-    .price{font-size:clamp(38px,6vw,66px);font-weight:800;letter-spacing:-2px;margin:8px 0}.label{color:var(--muted);font-size:13px}.status-big{font-size:30px;font-weight:800;margin-top:8px}.wait{color:var(--warn)}.enter{color:var(--good)}
-    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}.metric strong{display:block;font-size:25px;margin-top:8px}.metric small{color:var(--muted)}
-    .conditions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}.condition{position:relative;overflow:hidden}.condition .icon{font-size:28px}.condition h3{margin:8px 0 6px}.condition p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.yes{border-color:rgba(39,215,151,.5)}.no{border-color:rgba(255,100,124,.38)}
-    .bar{height:12px;background:#07111f;border-radius:999px;overflow:hidden;margin:12px 0 5px;border:1px solid var(--line)}.fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--violet));width:0;transition:.4s}.bartext{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
-    .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:10px 7px;border-bottom:1px solid var(--line);text-align:right}.table th{color:var(--muted);font-weight:500}.empty{color:var(--muted);padding:18px 0}
-    .pill{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;background:#112941;border:1px solid var(--line)}.foot{color:var(--muted);font-size:12px;text-align:center;margin:20px 0 4px}.error{display:none;background:#3a1620;border:1px solid #6d2535;color:#ffdbe1;padding:12px 14px;border-radius:14px;margin-bottom:16px}
-    @media(max-width:850px){.hero,.two{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.conditions{grid-template-columns:1fr}header{flex-direction:column}.wrap{padding:16px}}@media(max-width:470px){.grid{grid-template-columns:1fr}.price{letter-spacing:-1px}}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BTC V3 Dashboard</title>
+<style>
+:root{--bg:#06111e;--panel:#10233a;--panel2:#0b1c30;--line:#213954;--text:#f4f7fb;--muted:#91a7bd;--good:#26d795;--bad:#ff6178;--warn:#ffbd59;--blue:#66aaff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#153556 0,#06111e 34%);color:var(--text);font-family:Arial,"Noto Sans Hebrew",sans-serif}.wrap{max-width:980px;margin:auto;padding:16px}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.title{font-size:28px;font-weight:800}.sub{color:var(--muted);font-size:13px}.live{padding:7px 10px;border-radius:999px;background:#0d263d;border:1px solid var(--line);font-size:12px;white-space:nowrap}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--good);margin-left:6px;box-shadow:0 0 10px var(--good)}.card{background:linear-gradient(145deg,rgba(18,43,70,.98),rgba(9,24,41,.98));border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 38px rgba(0,0,0,.18)}.glance{margin-bottom:14px;text-align:center;border-width:2px}.glance.wait{border-color:rgba(255,189,89,.55)}.glance.go{border-color:rgba(38,215,149,.7)}.glance .big{font-size:30px;font-weight:900;margin:4px 0 6px}.glance .small{color:var(--muted);line-height:1.5}.glance .count{font-size:15px;margin-top:9px}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}.label{font-size:12px;color:var(--muted)}.price{font-size:48px;font-weight:900;margin:6px 0}.break{font-size:24px;font-weight:800;margin:3px 0 10px}.gaprow{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:13px}.bar{height:12px;background:#07111f;border-radius:999px;overflow:hidden;border:1px solid var(--line);margin:10px 0 6px}.fill{height:100%;background:linear-gradient(90deg,#5da8ff,#9d8cff);width:0}.conditions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}.cond{padding:16px}.cond .icon{font-size:27px}.cond h3{margin:7px 0 4px}.cond p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}.yes{border-color:rgba(38,215,149,.52)}.no{border-color:rgba(255,97,120,.45)}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}.metric strong{display:block;font-size:22px;margin-top:6px}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#122c45;border:1px solid var(--line);font-size:12px;margin-top:12px}.table{width:100%;border-collapse:collapse;font-size:12px}.table td,.table th{padding:8px 5px;border-bottom:1px solid var(--line);text-align:right}.table th{color:var(--muted);font-weight:500}.foot{text-align:center;color:var(--muted);font-size:11px;margin:16px 0}.error{display:none;background:#3a1620;border:1px solid #6d2535;padding:12px;border-radius:14px;margin-bottom:14px}.oktxt{color:var(--good)}.waittxt{color:var(--warn)}
+@media(max-width:760px){.hero,.two{grid-template-columns:1fr}.conditions{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.price{font-size:42px}.top{align-items:flex-start;flex-direction:column}}@media(max-width:430px){.metrics{grid-template-columns:1fr 1fr}.title{font-size:24px}.glance .big{font-size:25px}}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div><h1>BTC V3 Dashboard</h1><div class="sub">Paper Trading • 4H • Shadow / No real orders</div></div>
-    <div class="live"><span class="dot"></span><span id="liveText">טוען נתונים...</span></div>
-  </header>
+  <div class="top"><div><div class="title">BTC V3 Dashboard</div><div class="sub">Paper Trading • 4H • Shadow / No real orders</div></div><div class="live"><span class="dot"></span><span id="liveText">טוען...</span></div></div>
   <div id="error" class="error"></div>
+
+  <section id="glance" class="card glance wait">
+    <div class="label">החלטה עכשיו</div>
+    <div id="glanceTitle" class="big waittxt">טוען נתונים...</div>
+    <div id="glanceText" class="small">בודק כמה תנאים מתקיימים.</div>
+    <div id="condCount" class="count">—</div>
+  </section>
 
   <section class="hero">
     <div class="card">
       <div class="label">BTC-USDT — סגירת נר 4H אחרון</div>
-      <div class="price" id="price">—</div>
-      <div class="label">רמת הפריצה הנוכחית</div>
-      <div style="font-size:23px;font-weight:700;margin-top:4px" id="breakout">—</div>
-      <div class="bar"><div class="fill" id="progress"></div></div>
-      <div class="bartext"><span id="gap">—</span><span>יעד פריצה</span></div>
+      <div id="price" class="price">—</div>
+      <div class="label">רמת הפריצה</div><div id="breakout" class="break">—</div>
+      <div class="bar"><div id="progress" class="fill"></div></div>
+      <div class="gaprow"><span id="gapUsd">—</span><span id="gapPct">—</span></div>
     </div>
     <div class="card">
-      <div class="label">החלטת המערכת</div>
-      <div class="status-big wait" id="decision">טוען...</div>
-      <p class="sub" id="decisionText" style="line-height:1.7;margin-top:12px">בודק את שלושת תנאי הכניסה.</p>
-      <div style="margin-top:18px"><span class="pill" id="positionPill">אין פוזיציה פתוחה</span></div>
+      <div class="label">סטטוס עסקה</div>
+      <div id="decision" style="font-size:27px;font-weight:900;margin-top:7px">—</div>
+      <div id="decisionText" class="sub" style="margin-top:10px;line-height:1.6">—</div>
+      <span id="positionPill" class="pill">—</span>
     </div>
   </section>
 
   <section class="conditions">
-    <div class="card condition" id="trendCard"><div class="icon" id="trendIcon">…</div><h3>1. מגמה</h3><p id="trendText">בודק אם הכיוון הכללי עולה.</p></div>
-    <div class="card condition" id="breakCard"><div class="icon" id="breakIcon">…</div><h3>2. פריצה</h3><p id="breakText">בודק אם נר 4H נסגר מעל התקרה.</p></div>
-    <div class="card condition" id="volCard"><div class="icon" id="volIcon">…</div><h3>3. תנודתיות</h3><p id="volText">בודק שהשוק לא שקט מדי ולא סוער מדי.</p></div>
+    <div id="trendCard" class="card cond"><div id="trendIcon" class="icon">…</div><h3>1. מגמה</h3><p id="trendText">—</p></div>
+    <div id="breakCard" class="card cond"><div id="breakIcon" class="icon">…</div><h3>2. פריצה</h3><p id="breakText">—</p></div>
+    <div id="volCard" class="card cond"><div id="volIcon" class="icon">…</div><h3>3. תנודתיות</h3><p id="volText">—</p></div>
   </section>
 
-  <section class="grid">
-    <div class="card metric"><small>EMA20</small><strong id="ema20">—</strong></div>
-    <div class="card metric"><small>EMA50</small><strong id="ema50">—</strong></div>
-    <div class="card metric"><small>EMA200</small><strong id="ema200">—</strong></div>
-    <div class="card metric"><small>ATR14</small><strong id="atr">—</strong></div>
+  <section class="metrics">
+    <div class="card metric"><span class="label">EMA20</span><strong id="ema20">—</strong></div>
+    <div class="card metric"><span class="label">EMA50</span><strong id="ema50">—</strong></div>
+    <div class="card metric"><span class="label">EMA200</span><strong id="ema200">—</strong></div>
+    <div class="card metric"><span class="label">ATR14</span><strong id="atr">—</strong></div>
   </section>
 
   <section class="two">
-    <div class="card">
-      <div class="label">חשבון Paper</div>
-      <div class="grid" style="grid-template-columns:repeat(2,1fr);margin:12px 0 0">
-        <div class="metric"><small>Equity</small><strong id="equity">—</strong></div>
-        <div class="metric"><small>תשואה</small><strong id="ret">—</strong></div>
-        <div class="metric"><small>עסקאות סגורות</small><strong id="tradesCount">—</strong></div>
-        <div class="metric"><small>סיכון לעסקה</small><strong id="risk">—</strong></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="label">זמנים</div>
-      <table class="table"><tr><th>נר אחרון</th><td id="barTime">—</td></tr><tr><th>עדכון מערכת</th><td id="updated">—</td></tr><tr><th>מצב</th><td id="mode">—</td></tr><tr><th>אסטרטגיה</th><td>V3 FROZEN</td></tr></table>
-    </div>
+    <div class="card"><div class="label">חשבון Paper</div><div class="mini"><div class="metric"><span class="label">Equity</span><strong id="equity">—</strong></div><div class="metric"><span class="label">תשואה</span><strong id="ret">—</strong></div><div class="metric"><span class="label">עסקאות סגורות</span><strong id="tradesCount">—</strong></div><div class="metric"><span class="label">סיכון לעסקה</span><strong id="risk">—</strong></div></div></div>
+    <div class="card"><div class="label">זמנים ומצב</div><table class="table"><tr><th>נר אחרון</th><td id="barTime">—</td></tr><tr><th>עדכון מערכת</th><td id="updated">—</td></tr><tr><th>מצב</th><td>PAPER / SHADOW</td></tr><tr><th>אסטרטגיה</th><td>V3 FROZEN</td></tr></table></div>
   </section>
 
-  <section class="card">
-    <div class="label" style="margin-bottom:10px">עסקאות אחרונות</div>
-    <div id="tradesWrap" class="empty">עדיין אין עסקאות סגורות.</div>
-  </section>
-
-  <div class="foot">הדאשבורד קורא ישירות את קבצי ה־Paper Trading ב־GitHub ומתעדכן אוטומטית כל 60 שניות.</div>
+  <section class="card"><div class="label" style="margin-bottom:8px">עסקאות אחרונות</div><div id="tradesWrap" class="sub">עדיין אין עסקאות סגורות.</div></section>
+  <div class="foot">הדאשבורד קורא ישירות את נתוני ה־Paper Trading ומתעדכן אוטומטית כל 60 שניות.</div>
 </div>
 <script>
 const RAW='https://raw.githubusercontent.com/shimonc29/btc-backtest/main/';
@@ -92,28 +65,19 @@ const $=id=>document.getElementById(id);
 const usd=n=>Number.isFinite(+n)?'$'+Number(n).toLocaleString('en-US',{maximumFractionDigits:1}):'—';
 const pct=n=>Number.isFinite(+n)?Number(n).toFixed(2)+'%':'—';
 const dt=x=>x?new Date(x).toLocaleString('he-IL',{timeZone:'Asia/Jerusalem',dateStyle:'short',timeStyle:'short'}):'—';
-function cond(prefix,ok,yesText,noText){$(prefix+'Card').classList.toggle('yes',ok);$(prefix+'Card').classList.toggle('no',!ok);$(prefix+'Icon').textContent=ok?'✅':'❌';$(prefix+'Text').textContent=ok?yesText:noText}
-function parseCSV(txt){const lines=txt.trim().split(/\r?\n/);if(lines.length<2)return[];const h=lines[0].split(',');return lines.slice(1).map(line=>{const v=line.split(',');return Object.fromEntries(h.map((k,i)=>[k,v[i]??'']))})}
-async function load(){
-  try{
-    const r=await fetch(RAW+'paper/status.json?ts='+Date.now(),{cache:'no-store'}); if(!r.ok)throw new Error('status '+r.status); const s=await r.json();
-    $('error').style.display='none'; const b=s.latest_closed_bar||{}, sig=s.signal||{};
-    $('price').textContent=usd(b.close); $('breakout').textContent=usd(b.breakout_level);
-    $('ema20').textContent=usd(b.ema20); $('ema50').textContent=usd(b.ema50); $('ema200').textContent=usd(b.ema200); $('atr').textContent=usd(b.atr14);
-    $('equity').textContent=usd(s.equity); $('ret').textContent=pct(s.return_pct); $('tradesCount').textContent=s.closed_trades??0; $('risk').textContent=pct((s.parameters?.risk_pct??0)*100);
-    $('barTime').textContent=dt(b.open_time_utc); $('updated').textContent=dt(s.updated_at_utc); $('mode').textContent='PAPER / SHADOW';
-    const all=!!sig.entry_signal; $('decision').textContent=all?'כניסה מאושרת':'ממתינים'; $('decision').className='status-big '+(all?'enter':'wait');
-    $('decisionText').textContent=all?'שלושת התנאים מתקיימים. המערכת רשאית לפתוח עסקת Paper לפי כללי V3.':'עדיין לא מתקיימים כל שלושת התנאים יחד — אין כניסה.';
-    $('positionPill').textContent=s.position?'פוזיציה פתוחה':'אין פוזיציה פתוחה';
-    cond('trend',!!sig.trend_ok,'המגמה הכללית חיובית.','המגמה הכללית עדיין לא עומדת בתנאי V3.');
-    cond('break',!!sig.breakout_ok,'נר 4H נסגר מעל רמת הפריצה.','עדיין לא הייתה סגירת 4H מעל רמת הפריצה.');
-    cond('vol',!!sig.volatility_ok,'התנודתיות נמצאת בטווח הרצוי.','התנודתיות כרגע מחוץ לטווח הרצוי.');
-    const close=+b.close, br=+b.breakout_level; const ratio=(close&&br)?Math.max(0,Math.min(100,close/br*100)):0; $('progress').style.width=ratio+'%';
-    const diff=br-close; $('gap').textContent=Number.isFinite(diff)?(diff>0?usd(diff)+' חסרים לפריצה':'מעל הפריצה ב־'+usd(Math.abs(diff))):'—';
-    const age=(Date.now()-new Date(s.updated_at_utc).getTime())/60000; $('liveText').textContent=age<90?'נתונים פעילים • עודכן '+Math.round(age)+' דק׳':'עדכון אחרון לפני '+Math.round(age)+' דק׳';
-    try{const tr=await fetch(RAW+'paper/trades.csv?ts='+Date.now(),{cache:'no-store'});if(tr.ok){const rows=parseCSV(await tr.text()).slice(-8).reverse();if(rows.length){$('tradesWrap').className='';$('tradesWrap').innerHTML='<table class="table"><thead><tr><th>כניסה</th><th>יציאה</th><th>תוצאה</th><th>P&L</th><th>R</th></tr></thead><tbody>'+rows.map(x=>`<tr><td>${x.entry_time_utc?dt(x.entry_time_utc):'—'}</td><td>${x.exit_time_utc?dt(x.exit_time_utc):'—'}</td><td>${x.outcome||'—'}</td><td>${x.net_pnl?usd(+x.net_pnl):'—'}</td><td>${x.r_multiple?Number(x.r_multiple).toFixed(2):'—'}</td></tr>`).join('')+'</tbody></table>'}}}catch(e){}
-  }catch(e){$('error').style.display='block';$('error').textContent='לא הצלחתי לטעון את נתוני ה־Paper Trading כרגע. נסה לרענן בעוד דקה.';$('liveText').textContent='שגיאת טעינה'}
-}
+function cond(prefix,ok,yes,no){$(prefix+'Card').classList.toggle('yes',ok);$(prefix+'Card').classList.toggle('no',!ok);$(prefix+'Icon').textContent=ok?'✅':'❌';$(prefix+'Text').textContent=ok?yes:no}
+function parseCSV(t){const a=t.trim().split(/\r?\n/);if(a.length<2)return[];const h=a[0].split(',');return a.slice(1).map(l=>{const v=l.split(',');return Object.fromEntries(h.map((k,i)=>[k,v[i]||'']))})}
+async function load(){try{
+ const r=await fetch(RAW+'paper/status.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('status '+r.status);const s=await r.json();const b=s.latest_closed_bar||{},g=s.signal||{};$('error').style.display='none';
+ $('price').textContent=usd(b.close);$('breakout').textContent=usd(b.breakout_level);$('ema20').textContent=usd(b.ema20);$('ema50').textContent=usd(b.ema50);$('ema200').textContent=usd(b.ema200);$('atr').textContent=usd(b.atr14);$('equity').textContent=usd(s.equity);$('ret').textContent=pct(s.return_pct);$('tradesCount').textContent=s.closed_trades??0;$('risk').textContent=pct((s.parameters?.risk_pct||0)*100);$('barTime').textContent=dt(b.open_time_utc);$('updated').textContent=dt(s.updated_at_utc);
+ const checks=[!!g.trend_ok,!!g.breakout_ok,!!g.volatility_ok],count=checks.filter(Boolean).length,all=!!g.entry_signal;
+ $('condCount').textContent=count+' מתוך 3 תנאים מתקיימים';$('glanceTitle').textContent=all?'כניסה מאושרת':'לא נכנסים כרגע';$('glanceTitle').className='big '+(all?'oktxt':'waittxt');$('glance').className='card glance '+(all?'go':'wait');$('glanceText').textContent=all?'כל שלושת התנאים מתקיימים — המערכת רשאית לפתוח עסקת Paper.':'חסרים '+(3-count)+' מתוך 3 התנאים לכניסה.';
+ $('decision').textContent=all?'כניסה מאושרת':'ממתינים';$('decision').className=all?'oktxt':'waittxt';$('decisionText').textContent=all?'הסיגנל מלא לפי V3.':'עדיין אין סיגנל מלא. לא נפתחת עסקה.';$('positionPill').textContent=s.position?'פוזיציה פתוחה':'אין פוזיציה פתוחה';
+ cond('trend',checks[0],'המגמה הכללית חיובית.','המגמה עדיין לא עומדת בתנאי V3.');cond('break',checks[1],'נר 4H נסגר מעל רמת הפריצה.','עדיין אין סגירת 4H מעל רמת הפריצה.');cond('vol',checks[2],'התנודתיות בטווח הרצוי.','התנודתיות כרגע מחוץ לטווח הרצוי.');
+ const close=+b.close,br=+b.breakout_level,diff=br-close,ratio=(close&&br)?Math.max(0,Math.min(100,close/br*100)):0;$('progress').style.width=ratio+'%';$('gapUsd').textContent=Number.isFinite(diff)?(diff>0?usd(diff)+' חסרים':'מעל היעד ב־'+usd(Math.abs(diff))):'—';$('gapPct').textContent=Number.isFinite(diff)&&close?(diff/close*100).toFixed(2)+'% לפריצה':'—';
+ const age=(Date.now()-new Date(s.updated_at_utc).getTime())/60000;$('liveText').textContent=(age<90?'נתונים פעילים • ':'עדכון אחרון • ')+Math.round(age)+' דק׳';
+ try{const tr=await fetch(RAW+'paper/trades.csv?ts='+Date.now(),{cache:'no-store'});if(tr.ok){const rows=parseCSV(await tr.text()).slice(-6).reverse();if(rows.length)$('tradesWrap').innerHTML='<table class="table"><tr><th>כניסה</th><th>יציאה</th><th>תוצאה</th><th>P&L</th></tr>'+rows.map(x=>`<tr><td>${dt(x.entry_time_utc)}</td><td>${dt(x.exit_time_utc)}</td><td>${x.outcome||'—'}</td><td>${x.net_pnl?usd(+x.net_pnl):'—'}</td></tr>`).join('')+'</table>'}}catch(e){}
+}catch(e){$('error').style.display='block';$('error').textContent='שגיאה בטעינת הנתונים: '+e.message}}
 load();setInterval(load,60000);
 </script>
 </body>
