@@ -14,6 +14,12 @@ UNIVERSE = ["SPY", "QQQ", "IWM", "DIA", "XLK", "XLF", "XLV", "XLI", "XLY"]
 
 
 def fetch_yahoo(symbol: str) -> pd.DataFrame:
+    """Fetch Yahoo daily data and convert OHLC to an adjusted price basis.
+
+    Yahoo's adjusted close incorporates splits and cash distributions. We apply the
+    daily adjclose/raw-close factor to Open/High/Low/Close so signals, fills and the
+    benchmark all live on the same adjusted basis.
+    """
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range=max&interval=1d&includeAdjustedClose=true&events=history"
     req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urlopen(req, timeout=30) as r:
@@ -24,14 +30,25 @@ def fetch_yahoo(symbol: str) -> pd.DataFrame:
     result = result[0]
     ts = result.get("timestamp") or []
     quote = (result.get("indicators", {}).get("quote") or [{}])[0]
+    adj = (result.get("indicators", {}).get("adjclose") or [{}])[0].get("adjclose", [])
+    if not ts:
+        raise RuntimeError(f"Yahoo returned empty timestamps for {symbol}")
+
     df = pd.DataFrame({
         "Date": pd.to_datetime(ts, unit="s", utc=True).tz_convert(None).normalize(),
-        "Open": quote.get("open", []),
-        "High": quote.get("high", []),
-        "Low": quote.get("low", []),
-        "Close": quote.get("close", []),
+        "RawOpen": quote.get("open", []),
+        "RawHigh": quote.get("high", []),
+        "RawLow": quote.get("low", []),
+        "RawClose": quote.get("close", []),
+        "AdjClose": adj,
         "Volume": quote.get("volume", []),
     }).set_index("Date").sort_index()
+    df = df.dropna(subset=["RawOpen", "RawHigh", "RawLow", "RawClose", "AdjClose"])
+    factor = df["AdjClose"] / df["RawClose"].replace(0, np.nan)
+    df["Open"] = df["RawOpen"] * factor
+    df["High"] = df["RawHigh"] * factor
+    df["Low"] = df["RawLow"] * factor
+    df["Close"] = df["AdjClose"]
     return df[["Open", "High", "Low", "Close", "Volume"]].dropna()
 
 
@@ -73,8 +90,6 @@ def run_backtest(params: dict | None = None, raw_data: dict[str, pd.DataFrame] |
         return cash + sum(shares[s] * close_price_on_or_before(s, date) for s in UNIVERSE)
 
     def equity_before_open(date: pd.Timestamp, previous_date: pd.Timestamp | None) -> float:
-        # At the open we must not use today's close. Mark existing positions using the
-        # last completed close, which is the latest information available pre-open.
         if previous_date is None:
             return cash
         return cash + sum(shares[s] * close_price_on_or_before(s, previous_date) for s in UNIVERSE)
@@ -140,7 +155,6 @@ def run_backtest(params: dict | None = None, raw_data: dict[str, pd.DataFrame] |
         next_date = dates[i + 1] if i + 1 < len(dates) else None
         is_month_end = next_date is None or (next_date.year, next_date.month) != (date.year, date.month)
         if is_month_end and next_date is not None:
-            # Signal uses only today's completed close and executes at next session open.
             weights, regime, br = target_weights(features, spy_features, date, p)
             pending_weights = weights
             pending_meta = {"signal_date": date.isoformat(), "regime": regime, "breadth": br}
@@ -172,7 +186,7 @@ def run_backtest(params: dict | None = None, raw_data: dict[str, pd.DataFrame] |
     spy_dd = abs(float((spy_curve / spy_curve.cummax() - 1.0).min()))
 
     summary = {
-        "strategy": "V6 SPY baseline + adaptive overlay (audited timing)",
+        "strategy": "V6 SPY baseline + adaptive overlay (audited timing, adjusted prices)",
         "initial_capital_usd": INITIAL_CAPITAL_USD,
         "final_equity_usd": final_equity,
         "return_pct": total_return * 100,
@@ -188,10 +202,14 @@ def run_backtest(params: dict | None = None, raw_data: dict[str, pd.DataFrame] |
         "data_end": dates[-1].isoformat(),
         "symbols": UNIVERSE,
         "params": p,
+        "benchmark_spy_total_return_pct": spy_return * 100,
+        "benchmark_spy_total_return_cagr_pct": spy_cagr * 100,
+        "benchmark_spy_total_return_max_drawdown_pct": spy_dd * 100,
         "benchmark_spy_return_pct": spy_return * 100,
         "benchmark_spy_cagr_pct": spy_cagr * 100,
         "benchmark_spy_max_drawdown_pct": spy_dd * 100,
         "timing_audit": "month-end close signal -> next-session open execution; pre-open sizing uses prior close only",
+        "price_basis": "Yahoo adjusted OHLC derived from AdjClose/RawClose factor; benchmark uses adjusted SPY close",
     }
     return {"summary": summary, "equity": curve.reset_index(), "rebalances": rebalance_log}
 
