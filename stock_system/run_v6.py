@@ -35,17 +35,23 @@ def fetch_yahoo(symbol: str) -> pd.DataFrame:
     return df[["Open", "High", "Low", "Close", "Volume"]].dropna()
 
 
-def run_backtest(params: dict | None = None) -> dict:
+def run_backtest(params: dict | None = None, raw_data: dict[str, pd.DataFrame] | None = None,
+                 start_override: str | pd.Timestamp | None = None,
+                 end_override: str | pd.Timestamp | None = None) -> dict:
     p = {**DEFAULTS, **(params or {})}
-    raw = {s: fetch_yahoo(s) for s in UNIVERSE}
+    raw = raw_data if raw_data is not None else {s: fetch_yahoo(s) for s in UNIVERSE}
     features = {s: add_features(df, p) for s, df in raw.items()}
     spy_features = features["SPY"]
 
     common_start = max(df.index.min() for df in raw.values())
     start_date = max(common_start, pd.Timestamp("2001-01-01"))
+    if start_override is not None:
+        start_date = max(start_date, pd.Timestamp(start_override))
     end_date = min(df.index.max() for df in raw.values())
+    if end_override is not None:
+        end_date = min(end_date, pd.Timestamp(end_override))
     dates = raw["SPY"].loc[(raw["SPY"].index >= start_date) & (raw["SPY"].index <= end_date)].index
-    if len(dates) < 300:
+    if len(dates) < 60:
         raise RuntimeError("Insufficient common data for V6")
 
     cash = INITIAL_CAPITAL_USD
@@ -57,17 +63,27 @@ def run_backtest(params: dict | None = None) -> dict:
     regime_counts: dict[str, int] = {}
     turnover_events = 0
 
-    def equity_at(date: pd.Timestamp) -> float:
-        eq = cash
-        for s in UNIVERSE:
-            h = raw[s].loc[:date]
-            if not h.empty:
-                eq += shares[s] * float(h.iloc[-1]["Close"])
-        return eq
+    def close_price_on_or_before(symbol: str, date: pd.Timestamp) -> float:
+        h = raw[symbol].loc[:date]
+        if h.empty:
+            raise RuntimeError(f"No price for {symbol} on/before {date}")
+        return float(h.iloc[-1]["Close"])
+
+    def equity_at_close(date: pd.Timestamp) -> float:
+        return cash + sum(shares[s] * close_price_on_or_before(s, date) for s in UNIVERSE)
+
+    def equity_before_open(date: pd.Timestamp, previous_date: pd.Timestamp | None) -> float:
+        # At the open we must not use today's close. Mark existing positions using the
+        # last completed close, which is the latest information available pre-open.
+        if previous_date is None:
+            return cash
+        return cash + sum(shares[s] * close_price_on_or_before(s, previous_date) for s in UNIVERSE)
 
     for i, date in enumerate(dates):
+        previous_date = dates[i - 1] if i > 0 else None
+
         if pending_weights is not None:
-            eq_before = equity_at(date)
+            eq_before = equity_before_open(date, previous_date)
             target_dollars = {s: eq_before * pending_weights.get(s, 0.0) for s in UNIVERSE}
 
             for s in UNIVERSE:
@@ -113,22 +129,23 @@ def run_backtest(params: dict | None = None) -> dict:
                 "regime": regime,
                 "breadth": meta.get("breadth"),
                 "targets": pending_weights,
-                "equity_before": eq_before,
-                "equity_after": equity_at(date),
+                "equity_before_open": eq_before,
+                "equity_after_close": equity_at_close(date),
             })
             pending_weights = None
             pending_meta = None
 
-        equity_curve.append({"date": date.isoformat(), "equity": equity_at(date)})
+        equity_curve.append({"date": date.isoformat(), "equity": equity_at_close(date)})
 
         next_date = dates[i + 1] if i + 1 < len(dates) else None
         is_month_end = next_date is None or (next_date.year, next_date.month) != (date.year, date.month)
         if is_month_end and next_date is not None:
+            # Signal uses only today's completed close and executes at next session open.
             weights, regime, br = target_weights(features, spy_features, date, p)
             pending_weights = weights
             pending_meta = {"signal_date": date.isoformat(), "regime": regime, "breadth": br}
 
-    final_equity = equity_at(dates[-1])
+    final_equity = equity_at_close(dates[-1])
     curve = pd.DataFrame(equity_curve)
     curve["date"] = pd.to_datetime(curve["date"])
     curve = curve.set_index("date")
@@ -155,7 +172,7 @@ def run_backtest(params: dict | None = None) -> dict:
     spy_dd = abs(float((spy_curve / spy_curve.cummax() - 1.0).min()))
 
     summary = {
-        "strategy": "V6 SPY baseline + adaptive overlay",
+        "strategy": "V6 SPY baseline + adaptive overlay (audited timing)",
         "initial_capital_usd": INITIAL_CAPITAL_USD,
         "final_equity_usd": final_equity,
         "return_pct": total_return * 100,
@@ -174,6 +191,7 @@ def run_backtest(params: dict | None = None) -> dict:
         "benchmark_spy_return_pct": spy_return * 100,
         "benchmark_spy_cagr_pct": spy_cagr * 100,
         "benchmark_spy_max_drawdown_pct": spy_dd * 100,
+        "timing_audit": "month-end close signal -> next-session open execution; pre-open sizing uses prior close only",
     }
     return {"summary": summary, "equity": curve.reset_index(), "rebalances": rebalance_log}
 
