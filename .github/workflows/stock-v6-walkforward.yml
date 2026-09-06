@@ -1,0 +1,48 @@
+name: US Stock System V6 Walk-Forward
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'stock_system/run_v6.py'
+      - 'stock_system/strategy_v6.py'
+      - 'stock_system/walkforward_v6.py'
+      - '.github/workflows/stock-v6-walkforward.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stock-system-v6-walkforward
+  cancel-in-progress: true
+
+jobs:
+  walkforward:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run V6 walk-forward
+        run: python stock_system/walkforward_v6.py
+      - name: Persist V6 walk-forward results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f stock_system/results/v6_walkforward*
+          if git diff --cached --quiet; then
+            echo "No result changes"
+          else
+            git commit -m "Update V6 walk-forward results"
+            git pull --rebase origin main
+            git push
+          fi
