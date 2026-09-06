@@ -1,0 +1,25 @@
+{
+  "initial_capital_usd": 1500.0,
+  "final_equity_usd": 1814.9821717015277,
+  "return_pct": 20.998811446768517,
+  "cagr_pct": 0.5691100408862226,
+  "max_drawdown_pct": 4.390188348924099,
+  "profit_factor": 41.77967289043499,
+  "trades": 10,
+  "win_rate_pct": 90.0,
+  "avg_r": 3.9110356396364723,
+  "kill_switch_triggered": false,
+  "params": {
+    "ema_fast": 50,
+    "ema_slow": 200,
+    "breakout_lookback": 20,
+    "atr_period": 14,
+    "stop_atr": 2.0,
+    "trail_atr": 3.0,
+    "risk_pct": 0.005,
+    "max_positions": 3,
+    "kill_switch_drawdown": 0.12
+  },
+  "data_start": "1993-02-01T00:00:00",
+  "data_end": "2026-09-04T00:00:00"
+}
