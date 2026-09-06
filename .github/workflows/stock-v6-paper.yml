@@ -1,0 +1,51 @@
+name: US Stock System V6 Paper
+
+on:
+  workflow_dispatch:
+  schedule:
+    # After US market close year-round; weekdays only. Paper simulation uses the
+    # completed daily bar and never sends broker orders.
+    - cron: '15 22 * * 1-5'
+  push:
+    paths:
+      - 'stock_system/paper_v6.py'
+      - 'stock_system/strategy_v6.py'
+      - 'stock_system/run_v6.py'
+      - '.github/workflows/stock-v6-paper.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  paper:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run V6 stock paper engine
+        run: python stock_system/paper_v6.py
+
+      - name: Persist V6 paper state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f stock_system/paper_v6/state.json stock_system/paper_v6/latest_snapshot.json
+          if [ -f stock_system/paper_v6/trades.csv ]; then git add -f stock_system/paper_v6/trades.csv; fi
+          if git diff --cached --quiet; then
+            echo "No paper state changes"
+          else
+            git commit -m "Update V6 stock paper state"
+            git pull --rebase origin main
+            git push
+          fi
