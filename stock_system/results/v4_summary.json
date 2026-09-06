@@ -1,0 +1,52 @@
+{
+  "strategy": "V4 regime ensemble core + relative-strength satellites",
+  "initial_capital_usd": 1500.0,
+  "final_equity_usd": 2817.6284161978565,
+  "return_pct": 87.84189441319043,
+  "cagr_pct": 2.4860320987080353,
+  "max_drawdown_pct": 9.298844542694852,
+  "sharpe": 3.035144082154116,
+  "positive_month_pct": 44.15584415584416,
+  "rebalances": 308,
+  "turnover_events": 204,
+  "regime_counts": {
+    "BEAR": 106,
+    "CAUTION": 23,
+    "BULL_STRESS": 165,
+    "NORMAL_BULL": 14
+  },
+  "data_start": "2001-01-01T00:00:00",
+  "data_end": "2026-09-04T00:00:00",
+  "symbols": [
+    "SPY",
+    "QQQ",
+    "IWM",
+    "DIA",
+    "XLK",
+    "XLF",
+    "XLV",
+    "XLI",
+    "XLY"
+  ],
+  "params": {
+    "sma_fast": 50,
+    "sma_slow": 200,
+    "mom_fast": 63,
+    "mom_mid": 126,
+    "mom_slow": 252,
+    "vol_lookback": 63,
+    "top_n": 2,
+    "bull_core_weight": 0.55,
+    "bull_satellite_weight": 0.45,
+    "normal_core_weight": 0.7,
+    "normal_satellite_weight": 0.3,
+    "caution_exposure": 0.5,
+    "stress_exposure": 0.25,
+    "stress_vol_threshold": 0.3,
+    "max_asset_weight": 0.6,
+    "fee_rate": 0.0005,
+    "slippage_rate": 0.0002
+  },
+  "benchmark_spy_return_pct": 462.10040755063926,
+  "benchmark_spy_cagr_pct": 6.956336475616043
+}
