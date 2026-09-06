@@ -1,27 +1,39 @@
 {
-  "cash": -1.4814538484841933e-15,
-  "engine": "V6 frozen paper",
+  "cash": 1500.0,
+  "engine": "V6 frozen paper clean-forward",
   "initial_capital_usd": 1500.0,
-  "last_monthly_signal": "2026-08",
+  "last_monthly_signal": null,
   "last_processed_session": "2026-09-04",
   "notes": [
     "Paper only. No broker orders are sent.",
+    "No historical trade replay: the paper account starts from the reset date and only moves forward.",
     "Signals use adjusted Yahoo closes; simulated fills use adjusted next-session open.",
-    "The first allocation may be a bootstrap entry and is tagged separately from normal month-end rebalances."
+    "The first allocation is a bootstrap signal and is tagged separately from normal month-end rebalances."
   ],
-  "pending": null,
+  "pending": {
+    "bootstrap": true,
+    "breadth": 1.0,
+    "regime": "STRONG_BULL",
+    "signal_date": "2026-09-04",
+    "weights": {
+      "DIA": 0.08472172483358993,
+      "QQQ": 0.2,
+      "SPY": 0.6,
+      "XLK": 0.11527827516641008
+    }
+  },
   "shares": {
-    "DIA": 2.9955489509580655,
+    "DIA": 0.0,
     "IWM": 0.0,
-    "QQQ": 5.2859906428098755,
-    "SPY": 14.631330939072216,
+    "QQQ": 0.0,
+    "SPY": 0.0,
     "XLF": 0.0,
     "XLI": 0.0,
-    "XLK": 11.724461135120299,
+    "XLK": 0.0,
     "XLV": 0.0,
     "XLY": 0.0
   },
   "started": "2026-09-04",
-  "trade_count": 754,
-  "version": 1
+  "trade_count": 0,
+  "version": 2
 }
