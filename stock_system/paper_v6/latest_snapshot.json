@@ -1,33 +1,27 @@
 {
-  "as_of": "2026-09-04",
-  "cash_usd": 1500.0,
-  "current_weights": {},
-  "last_processed_session": "2026-09-04",
-  "paper_equity_usd": 1500.0,
-  "pending": {
-    "bootstrap": true,
-    "breadth": 1.0,
-    "regime": "STRONG_BULL",
-    "signal_date": "2026-09-04",
-    "weights": {
-      "DIA": 0.08472178374356237,
-      "QQQ": 0.2,
-      "SPY": 0.6,
-      "XLK": 0.11527821625643764
-    }
+  "as_of": "2026-09-08",
+  "cash_usd": -2.1510571102112408e-15,
+  "current_weights": {
+    "DIA": 0.084750569413284,
+    "QQQ": 0.2001704409702342,
+    "SPY": 0.6002559477516788,
+    "XLK": 0.11482304186480301
   },
+  "last_processed_session": "2026-09-08",
+  "paper_equity_usd": 1492.9986510293265,
+  "pending": null,
   "shares": {
-    "DIA": 0.0,
+    "DIA": 0.23963123077770979,
     "IWM": 0.0,
-    "QQQ": 0.0,
-    "SPY": 0.0,
+    "QQQ": 0.4160228916401114,
+    "SPY": 1.170010567859087,
     "XLF": 0.0,
     "XLI": 0.0,
-    "XLK": 0.0,
+    "XLK": 0.9124961466268291,
     "XLV": 0.0,
     "XLY": 0.0
   },
   "status": "PAPER_ONLY_NO_BROKER_CLEAN_FORWARD",
-  "trade_count": 0,
+  "trade_count": 4,
   "version": 3
 }
