@@ -3,7 +3,7 @@
   "engine": "V6 frozen paper clean-forward",
   "initial_capital_usd": 1500.0,
   "last_monthly_signal": null,
-  "last_processed_session": "2026-09-10",
+  "last_processed_session": "2026-09-11",
   "notes": [
     "Paper only. No broker orders are sent.",
     "No historical trade replay: the paper account starts from the reset date and only moves forward.",
