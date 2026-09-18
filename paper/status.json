@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-09-18T16:31:08.636409+00:00",
+  "updated_at_utc": "2026-09-18T19:42:12.904967+00:00",
   "strategy": "BTC Momentum Breakout 4H V3 (FROZEN)",
   "mode": "PAPER_ONLY_NO_REAL_ORDERS",
   "symbol": "BTC-USDT",
@@ -46,5 +46,5 @@
     "highest_close": 80744.94576,
     "bars_held": 0
   },
-  "processed_new_closed_bars": 2
+  "processed_new_closed_bars": 0
 }
