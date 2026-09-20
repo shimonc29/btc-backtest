@@ -16,10 +16,10 @@
     "initial_stop": 78746.87433142857,
     "trail_stop": 78972.11428571428,
     "highest_close": 81647.3,
-    "bars_held": 7
+    "bars_held": 8
   },
-  "last_processed_open_time": 1789833600000,
+  "last_processed_open_time": 1789848000000,
   "closed_trades": 0,
   "created_at": "2026-09-05T22:44:32.586648+00:00",
-  "updated_at": "2026-09-19T23:12:29.430062+00:00"
+  "updated_at": "2026-09-20T01:16:10.098600+00:00"
 }
