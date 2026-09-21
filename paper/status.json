@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-09-21T10:48:57.874729+00:00",
+  "updated_at_utc": "2026-09-21T17:06:33.946227+00:00",
   "strategy": "BTC Momentum Breakout 4H V3 (FROZEN)",
   "mode": "PAPER_ONLY_NO_REAL_ORDERS",
   "symbol": "BTC-USDT",
@@ -14,21 +14,21 @@
     "slippage_rate": 0.0002
   },
   "latest_closed_bar": {
-    "open_time_utc": "2026-09-21T04:00:00+00:00",
-    "close": 81722.0,
-    "ema20": 80352.73594506606,
-    "ema50": 79125.48131819064,
-    "ema200": 76377.7864036381,
-    "atr14": 688.1714285714281,
-    "breakout_level": 82099.0,
-    "atr_pct": 0.008420883343180884
+    "open_time_utc": "2026-09-21T12:00:00+00:00",
+    "close": 85931.7,
+    "ema20": 81274.5924629679,
+    "ema50": 79609.39417339132,
+    "ema200": 76557.02874342137,
+    "atr14": 970.4357142857136,
+    "breakout_level": 85325.2,
+    "atr_pct": 0.011293105039068396
   },
   "signal": {
     "valid": true,
     "trend_ok": true,
-    "breakout_ok": false,
-    "volatility_ok": false,
-    "entry_signal": false
+    "breakout_ok": true,
+    "volatility_ok": true,
+    "entry_signal": true
   },
   "equity": 2000.0,
   "return_pct": 0.0,
@@ -42,9 +42,9 @@
     "risk_dollars": 10.0,
     "entry_fee": 0.4041144105530329,
     "initial_stop": 78746.87433142857,
-    "trail_stop": 79700.6,
-    "highest_close": 81647.3,
-    "bars_held": 16
+    "trail_stop": 82239.69285714286,
+    "highest_close": 84884.9,
+    "bars_held": 18
   },
-  "processed_new_closed_bars": 1
+  "processed_new_closed_bars": 2
 }
