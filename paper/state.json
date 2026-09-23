@@ -15,11 +15,11 @@
     "entry_fee": 0.4041144105530329,
     "initial_stop": 78746.87433142857,
     "trail_stop": 83456.82857142857,
-    "highest_close": 86617.8,
-    "bars_held": 27
+    "highest_close": 86710.7,
+    "bars_held": 28
   },
-  "last_processed_open_time": 1790121600000,
+  "last_processed_open_time": 1790136000000,
   "closed_trades": 0,
   "created_at": "2026-09-05T22:44:32.586648+00:00",
-  "updated_at": "2026-09-23T06:04:09.546022+00:00"
+  "updated_at": "2026-09-23T11:47:46.929351+00:00"
 }
