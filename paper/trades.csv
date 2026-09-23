@@ -1,0 +1,2 @@
+entry_time_utc,exit_time_utc,entry_price,exit_price,qty,outcome,bars_held,gross_pnl,fees,net_pnl,r_multiple,equity_after
+2026-09-18T16:00:00+00:00,2026-09-23T12:00:00+00:00,80744.94576000,83983.29998000,0.0050048261,EMA20_EXIT,30,16.20739966,0.82443622,15.38296344,1.53829634,2015.38296344
