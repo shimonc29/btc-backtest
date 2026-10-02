@@ -1,7 +1,7 @@
 {
   "action": "HOLD",
-  "alert_id": "HOLD:2026-09-30",
-  "as_of": "2026-09-30",
+  "alert_id": "HOLD:2026-09-01",
+  "as_of": "2026-09-01",
   "cash_usd": -2.1510571102112408e-15,
   "current_weights": {
     "DIA": 0.08121416860272475,
@@ -14,7 +14,7 @@
   "paper_equity_usd": 1500.5320079423902,
   "paper_only": true,
   "regime": null,
-  "signal_date": "2026-09-30",
+  "signal_date": "2026-09-01",
   "target_weights": {},
   "title": "החזקה",
   "trade_count": 4
