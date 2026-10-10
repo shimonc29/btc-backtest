@@ -1,20 +1,20 @@
 {
   "action": "HOLD",
-  "alert_id": "HOLD:2026-10-08",
-  "as_of": "2026-10-08",
+  "alert_id": "HOLD:2026-10-09",
+  "as_of": "2026-10-09",
   "cash_usd": -2.1510571102112408e-15,
   "current_weights": {
-    "DIA": 0.08068407572851709,
-    "QQQ": 0.2046663050712701,
-    "SPY": 0.5958856111567002,
-    "XLK": 0.11876400804351243
+    "DIA": 0.08091109897872988,
+    "QQQ": 0.2044728764256391,
+    "SPY": 0.5959500684623023,
+    "XLK": 0.11866595613332874
   },
   "execution_note": "Signal only; no broker order is sent by this alert layer.",
-  "message_he": "אין שינוי נדרש כרגע. התיק הנוכחי: SPY 59.6%, QQQ 20.5%, XLK 11.9%, DIA 8.1%.",
-  "paper_equity_usd": 1519.5974751866404,
+  "message_he": "אין שינוי נדרש כרגע. התיק הנוכחי: SPY 59.6%, QQQ 20.4%, XLK 11.9%, DIA 8.1%.",
+  "paper_equity_usd": 1528.5427162344313,
   "paper_only": true,
   "regime": null,
-  "signal_date": "2026-10-08",
+  "signal_date": "2026-10-09",
   "target_weights": {},
   "title": "החזקה",
   "trade_count": 4
