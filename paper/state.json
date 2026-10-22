@@ -14,12 +14,12 @@
     "risk_dollars": 10.07691481721596,
     "entry_fee": 0.552408844684147,
     "initial_stop": 81994.38595428571,
-    "trail_stop": 82122.50714285714,
+    "trail_stop": 82166.77857142857,
     "highest_close": 84539.5,
-    "bars_held": 3
+    "bars_held": 4
   },
-  "last_processed_open_time": 1792612800000,
+  "last_processed_open_time": 1792627200000,
   "closed_trades": 1,
   "created_at": "2026-09-05T22:44:32.586648+00:00",
-  "updated_at": "2026-10-22T01:35:42.965974+00:00"
+  "updated_at": "2026-10-22T07:42:13.526064+00:00"
 }
