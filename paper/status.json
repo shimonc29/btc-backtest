@@ -1,5 +1,5 @@
 {
-  "updated_at_utc": "2026-11-15T01:58:26.660445+00:00",
+  "updated_at_utc": "2026-11-15T09:35:05.784393+00:00",
   "strategy": "BTC Momentum Breakout 4H V3 (FROZEN)",
   "mode": "PAPER_ONLY_NO_REAL_ORDERS",
   "symbol": "BTC-USDT",
@@ -14,14 +14,14 @@
     "slippage_rate": 0.0002
   },
   "latest_closed_bar": {
-    "open_time_utc": "2026-11-14T20:00:00+00:00",
-    "close": 64155.0,
-    "ema20": 68962.47841836722,
-    "ema50": 72054.27116519415,
-    "ema200": 77127.87450210932,
-    "atr14": 1488.7357142857145,
+    "open_time_utc": "2026-11-15T04:00:00+00:00",
+    "close": 64023.0,
+    "ema20": 68135.46555335728,
+    "ema50": 71466.90606216395,
+    "ema200": 76877.73205709195,
+    "atr14": 1746.142857142857,
     "breakout_level": 74803.3,
-    "atr_pct": 0.023205295211374242
+    "atr_pct": 0.027273680663868566
   },
   "signal": {
     "valid": true,
@@ -34,5 +34,5 @@
   "return_pct": 0.26209154558802794,
   "closed_trades": 2,
   "position": null,
-  "processed_new_closed_bars": 1
+  "processed_new_closed_bars": 2
 }
